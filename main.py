@@ -6,6 +6,8 @@
 import PySimpleGUI as sg
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import DES
+from Crypto.Util.Padding import pad
+
 from base64 import b64encode
 
 import codecs
@@ -33,21 +35,25 @@ layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_
 window = sg.Window('Window Title', layout)
 
 while True:
+    hashfile = open('hashed.txt','w')
     event, values = window.read()
     if event == 'OK':
         if 'a' == "a":
             print('same')
         tab_page = (values[len(values)-1])
         if(tab_page == 'DES'):
-            print('DES')
-            key = get_random_bytes(8)
-            iv = get_random_bytes(8)
-            message = bytes(values[1],'utf-8')
-            chiper = DES.new(key, DES.MODE_CBC,iv)
-            print(message)
-            chipertext = chiper.encrypt(message)
-            print(chipertext)
-            print(b64encode(chipertext).decode())
+            with open('dict.txt', 'r+') as f:
+                dict = (f.read().splitlines())
+                key = get_random_bytes(8)
+                iv = get_random_bytes(8)
+                for plaintext in dict:
+                    bytesplaintext = bytes(plaintext,'utf-8')
+                    bytesplaintext = pad(bytesplaintext, 8)
+                    chiper = DES.new(key, DES.MODE_CBC,iv)
+                    chipertext = chiper.encrypt(bytesplaintext)
+                    chipertext = b64encode(chipertext).decode()
+                    hashfile.write(chipertext+"\n")
+
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
         elif(tab_page == 'AES'):
