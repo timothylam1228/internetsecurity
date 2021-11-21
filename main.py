@@ -10,12 +10,17 @@ from Crypto.Util.Padding import pad
 
 from base64 import b64encode
 
+
 import codecs
 sg.theme('Dark Blue 3')   # Add a little color to your windows
 fontSize = 25
 
+def generateDesKey():
+    print('in function')
+
+
 des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECE','CBC','CFB','OFB','CTR'])],
-              [sg.Text('Key size is fixed at 56 bytes')],
+              [sg.Text('Key size is fixed at 56 bytes'),sg.Input(disabled=True,key = 'des_key'),sg.Button(target=(1,1),button_text="Generate Key",key='genDesKey')],
               [sg.Text('Input the message to encrypt'), sg.Input()]
               ]
 
@@ -29,22 +34,26 @@ aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('enc
 rsa_layout = [[sg.Text('RSA', font="Helvetica "  + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
         [sg.Text('Input the key size',font = ''+str(fontSize)), sg.Input()]]
 
-layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True)],
+layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')],
             [sg.OK(), sg.Cancel()]]
 
 window = sg.Window('Window Title', layout)
 
 while True:
-    hashfile = open('hashed.txt','w')
+    hashfile = open('hashed.txt','a')
+    hashfile.seek(0)
     event, values = window.read()
+    if event == 'genDesKey':
+        generatebytes = get_random_bytes(8)
+        print(generatebytes)
+        window['des_key'].update(generatebytes)
     if event == 'OK':
-        if 'a' == "a":
-            print('same')
-        tab_page = (values[len(values)-1])
+        print(values)
+        tab_page = values['Tab']
         if(tab_page == 'DES'):
             with open('dict.txt', 'r+') as f:
                 dict = (f.read().splitlines())
-                key = get_random_bytes(8)
+                key = values['des_key']
                 iv = get_random_bytes(8)
                 for plaintext in dict:
                     bytesplaintext = bytes(plaintext,'utf-8')
@@ -52,7 +61,11 @@ while True:
                     chiper = DES.new(key, DES.MODE_CBC,iv)
                     chipertext = chiper.encrypt(bytesplaintext)
                     chipertext = b64encode(chipertext).decode()
-                    hashfile.write(chipertext+"\n")
+                    hashfile.write(chipertext)
+                    hashfile.write('\n')
+                    # print(str(chipertext), file=hashfile)  # Python 3.x
+
+            print('done')
 
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
