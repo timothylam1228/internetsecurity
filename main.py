@@ -3,12 +3,14 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
+import hashlib
+from Crypto import Random
 import PySimpleGUI as sg
 from Crypto.Random import get_random_bytes
-from Crypto.Cipher import DES
+from Crypto.Cipher import DES, AES
 from Crypto.Util.Padding import pad
 from passlib.hash import des_crypt
-from base64 import b64encode
+from base64 import b64encode, b64decode
 from passlib.crypto import des
 import random
 
@@ -16,6 +18,54 @@ import codecs
 sg.theme('Dark Blue 3')   # Add a little color to your windows
 fontSize = 25
 
+class AESCipher(object):
+    def __init__(self, key):
+        self.blockSize = AES.block_size
+        #sha256 -> key length 256, MD5 -> 128, now - 192
+        # self.key = hashlib.md5(key.encode()).digest()
+        self.key = hashlib.sha256(key.encode()).digest()
+
+    def _pad(self, plainText):
+        paddingBytesNum = self.blockSize - len(plainText) % self.blockSize
+        asciiString = chr(paddingBytesNum)
+        paddingStr = paddingBytesNum * asciiString
+        paddedPlainText = plainText + paddingStr
+        return paddedPlainText
+
+    @staticmethod
+    def _unpad(plainText):
+        lastChar = plainText[len(plainText) - 1]
+        removingBytes = ord(lastChar)
+        return plainText[:-removingBytes]
+
+    def encrypt(self, plainText, mode):
+        plainText = self._pad(plainText)
+        iv = Random.new().read(self.blockSize) 
+        cipher = AESswitcher(self.key, mode, iv)
+        encryptedText = cipher.encrypt(plainText.encode())
+        return b64encode(iv + encryptedText).decode("utf-8")
+
+    def decrypt(self, encryptedText, mode):
+        encryptedText = b64decode(encryptedText)
+        iv = encryptedText[:self.blockSize]
+        cipher = AESswitcher(self.key, mode, iv)
+        plainText = cipher.decrypt(encryptedText[self.blockSize:]).decode("utf-8")
+        return self._unpad(plainText)
+
+def AESswitcher(key, mode, iv):
+    if (mode == 'ECB'):
+        cipher = AES.new(key, AES.MODE_ECB)
+    elif (mode == 'CBC'):
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+    elif (mode == 'CFB'):
+        cipher = AES.new(key, AES.MODE_CFB, iv)
+    elif (mode == 'OFB'):
+        cipher = AES.new(key, AES.MODE_CFB, iv)
+    elif (mode == 'CTR'):
+        cipher = AES.new(key, AES.MODE_CTR, iv) 
+    return cipher
+
+    
 def generateDesKey():
     print('in function')
 
@@ -28,8 +78,8 @@ des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECE','
 triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
                      [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
 
-aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('encryption algorithm'),sg.Combo(['ECE','CBC','CFB','OFB','CTR'])],
-               [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
+aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('encryption algorithm'),sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
+               [sg.Text('Input the key size'+str(fontSize)), sg.Input()],[sg.Text('Input the message to encrypt'), sg.Input()]]
 
 
 rsa_layout = [[sg.Text('RSA', font="Helvetica "  + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
@@ -72,9 +122,9 @@ while True:
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
         elif(tab_page == 'AES'):
-            print(values)
-            iv = get_random_bytes(16)
-            print('AES')
+            print("AES value: ", values)
+            AESObject = AESCipher(values[5])
+            mode = values[4]
         elif(tab_page == 'RSA'):
             print(values)
             print('RSA')
@@ -89,7 +139,14 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
 
 
-print(testing)
+
+
+    
+
+
+
+
+
 # Press the green button in the gutter to run the script.
 # if __name__ == '__main__':
 #     print_hi('PyCharm')
