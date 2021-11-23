@@ -21,7 +21,7 @@ from base64 import b64encode
 from Crypto.Util.Padding import pad, unpad
 from Crypto.PublicKey import RSA
 import random
-
+import subprocess
 # import crypt
 # from passlib.hash import des_crypt
 import random
@@ -98,9 +98,7 @@ def generateExample():
 
 des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECE','CBC','CFB','OFB','CTR'])],
              
-              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')],
-              [sg.Output(size(6,20))]
-              ]
+              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')]              ]
 
 triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
                      [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
@@ -143,7 +141,11 @@ while True:
             hashfile.write(msg)
             # hashfile.write('\n')
                     # print(str(chipertext), file=hashfile)  # Python 3.x
-            os.system('gnome-terminal -e')
+
+            # import subprocess
+            subprocess.Popen('cmd.exe && D: && cd ..')     
+            os.system('start cmd && D: %% cd .. ')
+            # os.system('gnome-terminal -e')
 
             print('done')
 
