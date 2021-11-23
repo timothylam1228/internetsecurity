@@ -137,6 +137,7 @@ while True:
             a = oriAESObject.encrypt(value, mode)
             print('encrypted: ', a)
 
+            #simulating getting the same key
             # evaAESObject = AESCipher('123123')
             evaAESObject = AESCipher(values[5])
             try:
