@@ -54,18 +54,23 @@ class AESCipher(object):
 
 def AESswitcher(key, mode, iv):
     if (mode == 'ECB'):
+        print('i am ECB')
         cipher = AES.new(key, AES.MODE_ECB)
     elif (mode == 'CBC'):
+        print('i am CBC')
         cipher = AES.new(key, AES.MODE_CBC, iv)
     elif (mode == 'CFB'):
+        print('i am CFB')
         cipher = AES.new(key, AES.MODE_CFB, iv)
     elif (mode == 'OFB'):
+        print('i am OFB')
         cipher = AES.new(key, AES.MODE_CFB, iv)
     elif (mode == 'CTR'):
-        cipher = AES.new(key, AES.MODE_CTR, iv) 
+        print('i am CTR')
+        cipher = AES.new(key, AES.MODE_CTR) 
     return cipher
 
-    
+
 def generateDesKey():
     print('in function')
 
@@ -123,8 +128,13 @@ while True:
             print('Triple DES')
         elif(tab_page == 'AES'):
             print("AES value: ", values)
-            AESObject = AESCipher(values[5])
             mode = values[4]
+            AESObject = AESCipher(values[5])
+            value = values[6]
+            print(mode, AESObject, value)
+
+            a = AESObject.encrypt(value, mode)
+            print(a)
         elif(tab_page == 'RSA'):
             print(values)
             print('RSA')
