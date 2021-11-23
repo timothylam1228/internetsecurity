@@ -22,7 +22,7 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.PublicKey import RSA
 import random
 
-import crypt
+# import crypt
 # from passlib.hash import des_crypt
 import random
 from os import urandom
@@ -86,8 +86,6 @@ def AESswitcher(key, mode, iv):
     return cipher
 
 
-def generateDesKey():
-    print('in function')
 def generateExample():
     print('generate')
     with open('example.txt','w') as examplefile:
@@ -99,8 +97,9 @@ def generateExample():
 
 
 des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECE','CBC','CFB','OFB','CTR'])],
-              [sg.Text('Key size is fixed at 56 bytes'),sg.Input(disabled=True,key = 'des_key'),sg.Button(button_text="Generate Key",key='genDesKey')],
-              [sg.Text('Input the message to encrypt'), sg.Input()]
+             
+              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')],
+              [sg.Output(size(6,20))]
               ]
 
 triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
@@ -127,21 +126,24 @@ while True:
     if event == 'OK':
         tab_page = values['Tab']
         if(tab_page == 'DES'):
-            with open('example.txt', 'r+') as f:
-                dict = (f.read().splitlines())
-                key = generatebytes
-                salt = random.getrandbits(24)
-                for plaintext in dict:
-                    # plaintext = b'passwor1 and 1 wqsd sds'
-                    plaintext = (bytes(plaintext,'utf8'))
-                    cipher = DES.new(key, DES.MODE_ECB)
-                    # plaintext = bytes(plaintext,'utf-8')
-                    msg = cipher.encrypt(pad(plaintext,8))
-                    hashfile.write(str(b64encode(plaintext).decode('utf8')))
-                    hashfile.write(':')
-                    hashfile.write(b64encode(msg).decode('utf8'))
-                    hashfile.write('\n')
+            # with open('example.txt', 'r+') as f:
+            # dict = (f.read().splitlines())
+            # key = generatebytes
+            # salt = random.getrandbits(24)
+           
+            # plaintext = b'passwor1 and 1 wqsd sds'
+            plaintext = values['des_input']
+            # cipher = DES.new(key, DES.MODE_ECB)
+            # plaintext = bytes(plaintext,'utf-8')
+            # msg = cipher.encrypt(pad(plaintesxt,8))
+            # hashfile.write(str(b64encode(plaintext).decode('utf8')))
+            # hashfile.write(':')
+            msg = des_crypt.hash(plaintext)
+            # hashfile.write(b64encode(msg).decode('utf8'))
+            hashfile.write(msg)
+            # hashfile.write('\n')
                     # print(str(chipertext), file=hashfile)  # Python 3.x
+            os.system('gnome-terminal -e')
 
             print('done')
 
