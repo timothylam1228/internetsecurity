@@ -39,6 +39,7 @@ class AESCipher(object):
         return plainText[:-removingBytes]
 
     def encrypt(self, plainText, mode):
+        print("key:", self.key)
         plainText = self._pad(plainText)
         iv = Random.new().read(self.blockSize) 
         cipher = AESswitcher(self.key, mode, iv)
@@ -129,12 +130,20 @@ while True:
         elif(tab_page == 'AES'):
             print("AES value: ", values)
             mode = values[4]
-            AESObject = AESCipher(values[5])
+            oriAESObject = AESCipher(values[5])
             value = values[6]
-            print(mode, AESObject, value)
+            print(mode, oriAESObject, value)
 
-            a = AESObject.encrypt(value, mode)
-            print(a)
+            a = oriAESObject.encrypt(value, mode)
+            print('encrypted: ', a)
+
+            # evaAESObject = AESCipher('123123')
+            evaAESObject = AESCipher(values[5])
+            try:
+                b = evaAESObject.decrypt(a, mode)
+                print("decrypt succeed, the value: ", b)
+            except:
+                print("decrypt failed")
         elif(tab_page == 'RSA'):
             print(values)
             print('RSA')
