@@ -152,7 +152,7 @@ while True:
             # import subprocess    
             # cmd_line = "start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt"
             command = 'hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt'
-            os.system('start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 --benchmark-all D:\internet\internetsecurity\hashed.txt" ')
+            os.system('start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 -w 3 --benchmark-all D:\internet\internetsecurity\hashed.txt" ')
 
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
