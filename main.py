@@ -22,6 +22,7 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.PublicKey import RSA
 import random
 import subprocess
+from subprocess import CREATE_NEW_CONSOLE
 # import crypt
 # from passlib.hash import des_crypt
 import random
@@ -96,9 +97,8 @@ def generateExample():
             examplefile.write(rnd+'\n')
 
 
-des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECE','CBC','CFB','OFB','CTR'])],
-             
-              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')]              ]
+des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
+              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')]]
 
 triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
                      [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
@@ -110,7 +110,7 @@ aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('enc
 rsa_layout = [[sg.Text('RSA', font="Helvetica "  + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
         [sg.Text('Input the key size',font = ''+str(fontSize)), sg.Input()]]
 
-layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')],
+layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')], [sg.Output()],
             [sg.OK(), sg.Cancel()]]
 
 window = sg.Window('Window Title', layout)
@@ -138,16 +138,21 @@ while True:
             # hashfile.write(':')
             msg = des_crypt.hash(plaintext)
             # hashfile.write(b64encode(msg).decode('utf8'))
+            print(msg)
             hashfile.write(msg)
             # hashfile.write('\n')
                     # print(str(chipertext), file=hashfile)  # Python 3.x
 
             # import subprocess
-            subprocess.Popen('cmd.exe && D: && cd ..')     
-            os.system('start cmd && D: %% cd .. ')
+            # subprocess.Popen('cmd', creationflags=CREATE_NEW_CONSOLE)     
+            # os.system("start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt") 
+            # os.system("")
+            # os.system('start cmd && D: %% cd .. ')
             # os.system('gnome-terminal -e')
-
-            print('done')
+            # import subprocess    
+            # cmd_line = "start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt"
+            command = 'hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt'
+            os.system('start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 --benchmark-all D:\internet\internetsecurity\hashed.txt" ')
 
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
