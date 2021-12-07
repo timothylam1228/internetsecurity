@@ -98,23 +98,43 @@ def generateExample():
             examplefile.write(rnd+'\n')
 
 
-des_layout = [[sg.Text('DES', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
-              [sg.Text('Input the message to encrypt'), sg.Input(key='des_input')]]
-
-triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
-                     [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
-
-aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('encryption algorithm'),sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
-               [sg.Text('Input the key size'+str(fontSize)), sg.Input()],[sg.Text('Input the message to encrypt'), sg.Input()]]
 
 
-rsa_layout = [[sg.Text('RSA', font="Helvetica "  + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
+
+fisrt_frame_layout = sg.Frame(title="First" ,layout=[
+                  [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['AES','DES'])],
+                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
+              [sg.Text('Select the Key Size'), sg.Combo(['128','256','512'])],
+               ],size=(800, 100))
+
+second_frame_layout = sg.Frame(title="Second",layout=[
+                   [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['AES','DES'])],
+                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
+              [sg.Text('Select the Key Size'), sg.Combo(['56'])],
+               ],size=(800, 100))
+
+# triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
+#                      [sg.Text('Input the key size'+str(fontSize)), sg.Input()]]
+
+# aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('encryption algorithm'),sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
+#                [sg.Text('Input the key size'+str(fontSize)), sg.Input()],[sg.Text('Input the message to encrypt'), sg.Input()]]
+
+
+message_layout = [
         [sg.Text('Input the key size',font = ''+str(fontSize)), sg.Input()]]
 
-layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')], 
-# [sg.Output()],
-            [sg.OK(), sg.Cancel()]]
+# layout = [[sg.TabGroup([[sg.Tab('First Encryption', des_layout), sg.Tab('Second Encryption', triple_des_layout)]],enable_events=True,key='Tab')], 
+# # [sg.Output()],
+#             [sg.OK(), sg.Cancel()]]
 
+
+col = [[fisrt_frame_layout],[second_frame_layout]]
+
+layout = [
+          [sg.Column(col)],
+          [[sg.Text('Input the message'), sg.Input()]],
+          [sg.Submit(), sg.Cancel()]
+         ]
 window = sg.Window('Window Title', layout)
 
 while True:
@@ -143,7 +163,7 @@ while True:
             print(msg)
             hashfile.write(msg)
             # hashfile.write('\n')
-                    # print(str(chipertext), file=hashfile)  # Python 3.x
+        # print(str(chipertext), file=hashfile)  # Python 3.x
 
             # import subprocess
             # subprocess.Popen('cmd', creationflags=CREATE_NEW_CONSOLE)     
