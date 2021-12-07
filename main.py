@@ -36,6 +36,7 @@ window = sg.Window('Window Title', layout)
 
 while True:
     hashfile = open('hashed.txt','w')
+    hashfile.seek(0)
     event, values = window.read()
     if event == 'OK':
         if 'a' == "a":
@@ -46,13 +47,15 @@ while True:
                 dict = (f.read().splitlines())
                 key = get_random_bytes(8)
                 iv = get_random_bytes(8)
-                for plaintext in dict:
+                for plaintext in dict :
                     bytesplaintext = bytes(plaintext,'utf-8')
-                    bytesplaintext = pad(bytesplaintext, 8)
+                    bytesplaintext = pad(bytesplaintext, 8,style='pkcs7')
                     chiper = DES.new(key, DES.MODE_CBC,iv)
                     chipertext = chiper.encrypt(bytesplaintext)
                     chipertext = b64encode(chipertext).decode()
-                    hashfile.write(chipertext+"\n")
+                    hashfile.write(chipertext+str("\n"))
+            print('done')
+
 
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
