@@ -58,6 +58,7 @@ class AESCipher(object):
         plainText = self._pad(plainText)
         iv = Random.new().read(self.blockSize) 
         cipher = AESswitcher(self.key, mode, iv)
+        print(cipher);
         encryptedText = cipher.encrypt(plainText.encode())
         return b64encode(iv + encryptedText).decode("utf-8")
 
@@ -69,6 +70,7 @@ class AESCipher(object):
         return self._unpad(plainText)
 
 def AESswitcher(key, mode, iv):
+    cipher = '';
     if (mode == 'ECB'):
         print('i am ECB')
         cipher = AES.new(key, AES.MODE_ECB)
@@ -110,18 +112,14 @@ aes_layout =  [[sg.Text('AES', font="Helvetica " + str(fontSize))],[sg.Text('enc
 rsa_layout = [[sg.Text('RSA', font="Helvetica "  + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
         [sg.Text('Input the key size',font = ''+str(fontSize)), sg.Input()]]
 
-layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')], [sg.Output()],
+layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')],
+# layout = [[sg.TabGroup([[sg.Tab('DES', des_layout), sg.Tab('Triple DES', triple_des_layout),sg.Tab('AES',aes_layout),sg.Tab('RSA',rsa_layout)]],enable_events=True,key='Tab')], [sg.Output()],
             [sg.OK(), sg.Cancel()]]
 
 window = sg.Window('Window Title', layout)
 
 while True:
-<<<<<<< HEAD
-    hashfile = open('hashed.txt','w')
-    hashfile.seek(0)
-=======
     hashfile = open('hashed.txt', 'w')
->>>>>>> c6e07e1f687961b8cb980bc4cb77064476f339ce
     event, values = window.read()
     if event == 'genDesKey':
         generatebytes = get_random_bytes(8)
@@ -129,21 +127,6 @@ while True:
     if event == 'OK':
         tab_page = values['Tab']
         if(tab_page == 'DES'):
-<<<<<<< HEAD
-            with open('dict.txt', 'r+') as f:
-                dict = (f.read().splitlines())
-                key = get_random_bytes(8)
-                iv = get_random_bytes(8)
-                for plaintext in dict :
-                    bytesplaintext = bytes(plaintext,'utf-8')
-                    bytesplaintext = pad(bytesplaintext, 8,style='pkcs7')
-                    chiper = DES.new(key, DES.MODE_CBC,iv)
-                    chipertext = chiper.encrypt(bytesplaintext)
-                    chipertext = b64encode(chipertext).decode()
-                    hashfile.write(chipertext+str("\n"))
-            print('done')
-
-=======
             # with open('example.txt', 'r+') as f:
             # dict = (f.read().splitlines())
             # key = generatebytes
@@ -173,15 +156,15 @@ while True:
             # cmd_line = "start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt"
             command = 'hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt'
             os.system('start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 -w 3 --benchmark-all D:\internet\internetsecurity\hashed.txt" ')
->>>>>>> c6e07e1f687961b8cb980bc4cb77064476f339ce
 
         elif(tab_page == 'Triple DES'):
             print('Triple DES')
         elif(tab_page == 'AES'):
             print("AES value: ", values)
-            mode = values[4]
-            oriAESObject = AESCipher(values[5])
-            value = values[6]
+            mode = values[3]
+            print(mode);
+            oriAESObject = AESCipher(values[4])
+            value = values[5]
             print(mode, oriAESObject, value)
 
             a = oriAESObject.encrypt(value, mode)
@@ -189,7 +172,7 @@ while True:
 
             #simulating getting the same key
             # evaAESObject = AESCipher('123123')
-            evaAESObject = AESCipher(values[5])
+            evaAESObject = AESCipher(values[4])
             try:
                 b = evaAESObject.decrypt(a, mode)
                 print("decrypt succeed, the value: ", b)
