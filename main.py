@@ -3,33 +3,22 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import base64
-
 import hashlib
 from Crypto import Random
 import PySimpleGUI as sg
 from Crypto import Random
 from Crypto.Random import get_random_bytes
-from Crypto.Cipher import DES, AES
-from Crypto.Util.Padding import pad
+from Crypto.Cipher import  AES
 from passlib.hash import des_crypt
 from base64 import b64encode, b64decode
-from passlib.crypto import des
 from Crypto.Cipher import PKCS1_v1_5 as PKCS1_cipher
-
 # from Crypto.Util.Padding import pad
 from base64 import b64encode
-from Crypto.Util.Padding import pad, unpad
 from Crypto.PublicKey import RSA
-import random
-import subprocess
 from subprocess import CREATE_NEW_CONSOLE
-# import crypt
-# from passlib.hash import des_crypt
-import random
 from os import urandom
 import os
-
-import codecs
+import matplotlib.pyplot as plt
 sg.theme('Dark Blue 3')   # Add a little color to your windows
 fontSize = 25
 
@@ -97,20 +86,36 @@ def generateExample():
             print(len(rnd))
             examplefile.write(rnd+'\n')
 
+def draw_plot(x,y):
+    x1 = [1,2,3]
+    y1 = [2,4,1]
+    # plotting the line 1 points
+    plt.plot(x1, y1, label = x)
+    plt.xlabel('Plain Text Size')
+    plt.ylabel('Time')
 
+    # line 2 points
+    x2 = [1,2,3]
+    y2 = [4,1,3]
+    # plotting the line 2 points
+    plt.plot(x2, y2, label = y)
+
+    plt.legend()
+    plt.show()
+ 
 
 
 
 fisrt_frame_layout = sg.Frame(title="First" ,layout=[
-                  [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['AES','DES'])],
-                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
-              [sg.Text('Select the Key Size'), sg.Combo(['128','256','512'])],
+                  [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['AES'],key='firstmethod')],
+                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'],key='firstmethodmode')],
+              [sg.Text('Select the Key Size'), sg.Combo(['128','256','512'],key='firstmethodkeysize')],
                ],size=(800, 100))
 
 second_frame_layout = sg.Frame(title="Second",layout=[
-                   [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['AES','DES'])],
-                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'])],
-              [sg.Text('Select the Key Size'), sg.Combo(['56'])],
+                   [sg.Text('Method', font="Helvetica"+str(fontSize)) ,sg.Combo(['DES'],key='secondmethod')],
+                  [sg.Text('Mode', font="Helvetica"+str(fontSize)) ,sg.Combo(['ECB','CBC','CFB','OFB','CTR'],key='secondmethodmode')],
+              [sg.Text('Select the Key Size'), sg.Combo(['56'],key='secondmethodkeysize')],
                ],size=(800, 100))
 
 # triple_des_layout = [[sg.Text('Triple DES', font="Helvetica " + str(fontSize)) ,sg.Combo(['Select1', 'Select2'])],
@@ -132,17 +137,27 @@ col = [[fisrt_frame_layout],[second_frame_layout]]
 
 layout = [
           [sg.Column(col)],
-          [[sg.Text('Input the message'), sg.Input()]],
+          [[sg.Text('Input the message'), sg.Input(key='message')]],
           [sg.Submit(), sg.Cancel()]
          ]
 window = sg.Window('Window Title', layout)
 
 while True:
-    hashfile = open('hashed.txt', 'w')
+    # hashfile = open('hashed.txt', 'w')
     event, values = window.read()
+    print(event,values)
     if event == 'genDesKey':
         generatebytes = get_random_bytes(8)
         window['des_key'].update(str(b64encode(generatebytes).decode('utf8')))
+
+    if event == 'Submit':
+        mode = values['firstmethod']
+        oriAESObject = AESCipher(mode)
+        value = values['message']
+        print(mode, oriAESObject, value)   
+        draw_plot(str(values['firstmethod']+' - '+values['firstmethodmode']+' '+' key size : '+values['firstmethodkeysize']),str(values['secondmethod']+' - '+values['secondmethodmode']+' '' key size : '+values['secondmethodkeysize']))
+    
+
     if event == 'OK':
         tab_page = values['Tab']
         if(tab_page == 'DES'):
@@ -163,16 +178,7 @@ while True:
             print(msg)
             hashfile.write(msg)
             # hashfile.write('\n')
-        # print(str(chipertext), file=hashfile)  # Python 3.x
 
-            # import subprocess
-            # subprocess.Popen('cmd', creationflags=CREATE_NEW_CONSOLE)     
-            # os.system("start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt") 
-            # os.system("")
-            # os.system('start cmd && D: %% cd .. ')
-            # os.system('gnome-terminal -e')
-            # import subprocess    
-            # cmd_line = "start cmd && cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt"
             command = 'hashcat -m 1500 -a 3 D:\internet\internetsecurity\hashed.txt'
             os.system('start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 -w 3 --benchmark-all D:\internet\internetsecurity\hashed.txt" ')
             #//start cmd /K "cd D:\hashcat\hashcat-6.2.5 && hashcat -m 1500 -a 3 -w 3 --benchmark-all D:\internet\internetsecurity\hashed.txt"
